@@ -1,27 +1,32 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-import ConnectionState from './components/ConnectionState.vue'
-import ConnectionManager from './components/ConnectionManager.vue'
+import { RouterLink, RouterView } from 'vue-router';
+import { NDialogProvider } from 'naive-ui';
+import HelloWorld from './components/HelloWorld.vue';
+import ConnectionState from './components/ConnectionState.vue';
+import ConnectionManager from './components/ConnectionManager.vue';
+import LoginPopup from './components/LoginPopup.vue';
 </script>
 
 <template>
-    <header class="connection-state">
-        <ConnectionState />
-        <ConnectionManager />
+    <n-dialog-provider>
+        <header class="connection-state">
+            <ConnectionState />
+            <ConnectionManager />
+            <LoginPopup />
 
-        <div class="wrapper">
-            <HelloWorld msg="You did it!" />
+            <div class="wrapper">
+                <HelloWorld msg="You did it!" />
 
-            <nav>
-                <RouterLink to="/">Home</RouterLink>
-                <RouterLink to="/about">About</RouterLink>
-                <RouterLink to="/chat">Chat</RouterLink>
-            </nav>
-        </div>
-    </header>
+                <nav>
+                    <RouterLink to="/">Home</RouterLink>
+                    <RouterLink to="/about">About</RouterLink>
+                    <RouterLink to="/chat">Chat</RouterLink>
+                </nav>
+            </div>
+        </header>
 
-    <RouterView />
+        <RouterView />
+    </n-dialog-provider>
 </template>
 
 <style scoped>
