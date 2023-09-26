@@ -3,14 +3,14 @@ import { useDialog, NInput } from 'naive-ui';
 import { useUserStore } from '../stores/user';
 import { ref, onMounted, h } from 'vue';
 
-const { setUserName } = useUserStore();
+const userStore = useUserStore();
 const userName = ref('');
 
 const handleUserNameChange = (value: string) => {
     userName.value = value;
 };
 const handlePositiveClick = () => {
-    setUserName(userName.value);
+    userStore.setUserName(userName.value);
 };
 
 const dialog = useDialog();
@@ -20,6 +20,9 @@ onMounted(() => {
         positiveText: 'Continue',
         content: () => h(NInput, { value: userName.value, onUpdateValue: handleUserNameChange }),
         onPositiveClick: handlePositiveClick,
+        closable: false,
+        closeOnEsc: false,
+        maskClosable: false,
     });
 });
 </script>

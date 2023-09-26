@@ -9,7 +9,7 @@ export const state = reactive({
 
 // const URL = process.env.NODE_ENV === 'production' ? null : 'http://localhost:3000'
 
-export const socket = io('http://127.0.0.1:3000', {
+export const socket = io('http://localhost:3000', {
     autoConnect: false,
     transports: ['websocket'],
 });

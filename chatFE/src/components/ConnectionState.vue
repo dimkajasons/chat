@@ -4,7 +4,7 @@ import { CheckmarkCircle } from '@vicons/ionicons5';
 import { NIcon } from 'naive-ui';
 import { useUserStore } from '../stores/user';
 
-const { userName } = useUserStore();
+const userStore = useUserStore();
 </script>
 
 <template>
@@ -13,6 +13,6 @@ const { userName } = useUserStore();
             <checkmark-circle />
         </n-icon>
         <p>State: {{ state.connected }}</p>
-        <p>User: {{ userName }}</p>
+        <p>User: {{ userStore.userName }}</p>
     </div>
 </template>

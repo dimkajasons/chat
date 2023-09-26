@@ -1,6 +1,7 @@
 import express, { Express } from 'express';
 import cors from 'cors';
 import { Server } from 'http';
+import { Server as SocketServer } from 'socket.io';
 import { inject, injectable } from 'inversify';
 import { json } from 'body-parser';
 import { ILogger } from './logger/logger.interface';
@@ -8,17 +9,20 @@ import { TYPES } from './types';
 import 'reflect-metadata';
 import { IExeptionFilter } from './errors/exeption.filter.interface';
 import { IConfigService } from './config/config.service.interface';
+import { ISocketService } from './socket/socket.service.interface';
 
 @injectable()
 export class App {
 	app: Express;
 	server: Server;
 	port: number;
+	socketInstance: SocketServer;
 
 	constructor(
 		@inject(TYPES.ILogger) private logger: ILogger,
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.ExeptionFilter) private exeptionFilter: IExeptionFilter,
+		@inject(TYPES.SocketService) private socketService: ISocketService,
 	) {
 		this.app = express();
 		this.port = 3000;
@@ -31,6 +35,11 @@ export class App {
 				origin: this.configService.get('CORS_ORIGIN'),
 			}),
 		);
+	}
+
+	useSocketService(): void {
+		this.socketInstance = new SocketServer(this.server);
+		this.socketService.initSocket(this.socketInstance);
 	}
 
 	useRoutes(): void {
@@ -47,7 +56,11 @@ export class App {
 		this.useMiddleware();
 		this.useRoutes();
 		this.useExeptionFilters();
+
 		this.server = this.app.listen(this.port);
+
+		this.useSocketService();
+
 		// connect to db
 		this.logger.log(`Server started at http://localhost:${this.port}`);
 	}

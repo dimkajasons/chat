@@ -8,13 +8,9 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}/chatBE/index.js",
-            "outFiles": [
-                "${workspaceFolder}/**/*.js"
-            ]
+            "skipFiles": ["<node_internals>/**"],
+            "program": "${workspaceFolder}/chatBE/src/main.ts",
+            "outFiles": ["${workspaceFolder}/**/*.js"]
         }
     ]
 }
