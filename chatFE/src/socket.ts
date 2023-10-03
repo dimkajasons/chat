@@ -1,10 +1,10 @@
 import { reactive } from 'vue';
 import { io } from 'socket.io-client';
 
-export const state = reactive({
+export const state = reactive<any>({
     connected: false,
-    fooEvents: [],
-    barEvents: [],
+    activeUsers: [],
+    messages: {},
 });
 
 // const URL = process.env.NODE_ENV === 'production' ? null : 'http://localhost:3000'
@@ -22,10 +22,19 @@ socket.on('disconnect', () => {
     state.connected = false;
 });
 
-socket.on('foo', (...args) => {
-    state.fooEvents.push(args);
+socket.on('user-connected', (user: any) => {
+    state.activeUsers.push(user);
+});
+socket.on('user-disconnected', (user: any) => {
+    state.activeUsers = state.activeUsers.filter(
+        (storedUser: any) => storedUser.name !== user.name,
+    );
 });
 
-socket.on('bar', (...args) => {
-    state.barEvents.push(args);
+socket.on('msg-received', (message: any) => {
+    if (state.messages[message.user]) {
+        state.messages[message.user] = [message];
+    } else {
+        state.messages[message.user].push(message);
+    }
 });

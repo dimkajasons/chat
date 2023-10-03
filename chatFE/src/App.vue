@@ -1,94 +1,40 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router';
 import { NDialogProvider } from 'naive-ui';
-import HelloWorld from './components/HelloWorld.vue';
 import ConnectionState from './components/ConnectionState.vue';
 import ConnectionManager from './components/ConnectionManager.vue';
 import LoginPopup from './components/LoginPopup.vue';
+import ChatComponent from './components/ChatComponent.vue';
+import SidePanel from './components/SidePanel.vue';
 </script>
 
 <template>
-    <n-dialog-provider>
-        <header class="connection-state">
-            <ConnectionState />
-            <ConnectionManager />
-            <LoginPopup />
-
-            <div class="wrapper">
-                <HelloWorld msg="You did it!" />
-
-                <nav>
-                    <RouterLink to="/">Home</RouterLink>
-                    <RouterLink to="/about">About</RouterLink>
-                    <RouterLink to="/chat">Chat</RouterLink>
-                </nav>
+    <div class="wrapper">
+        <n-dialog-provider>
+            <div class="side-panel">
+                <SidePanel />
             </div>
-        </header>
-
-        <RouterView />
-    </n-dialog-provider>
+            <div class="chat-panel">
+                <ChatComponent />
+            </div>
+            <!-- <LoginPopup /> -->
+        </n-dialog-provider>
+    </div>
 </template>
 
 <style scoped>
-header {
-    line-height: 1.5;
-    max-height: 100vh;
-}
-
-.connection-state {
-    display: block;
-    margin: 0 auto 2rem;
-}
-
-nav {
+.wrapper {
+    height: 100%;
     width: 100%;
-    font-size: 12px;
-    text-align: center;
-    margin-top: 2rem;
+
+    display: flex;
+    flex-direction: row;
 }
-
-nav a.router-link-exact-active {
-    color: var(--color-text);
+.side-panel {
+    min-width: 250px;
+    width: 250px;
 }
-
-nav a.router-link-exact-active:hover {
-    background-color: transparent;
-}
-
-nav a {
-    display: inline-block;
-    padding: 0 1rem;
-    border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-    border: 0;
-}
-
-@media (min-width: 1024px) {
-    header {
-        display: flex;
-        place-items: center;
-        padding-right: calc(var(--section-gap) / 2);
-    }
-
-    .logo {
-        margin: 0 2rem 0 0;
-    }
-
-    header .wrapper {
-        display: flex;
-        place-items: flex-start;
-        flex-wrap: wrap;
-    }
-
-    nav {
-        text-align: left;
-        margin-left: -1rem;
-        font-size: 1rem;
-
-        padding: 1rem 0;
-        margin-top: 1rem;
-    }
+.chat-panel {
+    overflow: hidden;
+    flex-grow: 1;
 }
 </style>
