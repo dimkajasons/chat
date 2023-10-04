@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { NInputGroup, NInput, NButton } from 'naive-ui';
-import { socket } from '@/socket';
+import { state as socketState } from '@/socket';
 import { useUserStore } from '../stores/user';
 
 const userStore = useUserStore();
@@ -11,7 +11,10 @@ const message = ref('');
 const handleSend = () => {
     console.log(message.value);
 
-    socket.emit('chat-message', { userName: userStore.userName, message: message.value });
+    socketState.socket.emit('chat-message', {
+        userName: userStore.userName,
+        message: message.value,
+    });
 };
 const handleUpdateValue = (value: string) => {
     message.value = value;

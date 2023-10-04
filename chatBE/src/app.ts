@@ -10,6 +10,7 @@ import 'reflect-metadata';
 import { IExeptionFilter } from './errors/exeption.filter.interface';
 import { IConfigService } from './config/config.service.interface';
 import { ISocketService } from './socket/socket.service.interface';
+import { UserController } from './users/users.controller';
 
 @injectable()
 export class App {
@@ -23,6 +24,7 @@ export class App {
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.ExeptionFilter) private exeptionFilter: IExeptionFilter,
 		@inject(TYPES.SocketService) private socketService: ISocketService,
+		@inject(TYPES.UserController) private userController: UserController,
 	) {
 		this.app = express();
 		this.port = 3000;
@@ -43,6 +45,7 @@ export class App {
 	}
 
 	useRoutes(): void {
+		this.app.use('/users', this.userController.router);
 		this.app.use('/test', (req, res) => {
 			res.send('ok');
 		});

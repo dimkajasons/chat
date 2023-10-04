@@ -1,14 +1,5 @@
 import { defineStore } from 'pinia';
-
-// export const useUserStore = defineStore('userStore', () => {
-//     const userName = ref('');
-
-//     const setUserName = (name: string) => {
-//         userName.value = name;
-//     };
-
-//     return { userName, setUserName };
-// });
+import { loginUser } from '../services/users.service';
 
 export const useUserStore = defineStore('userStore', {
     state: () => ({
@@ -18,8 +9,14 @@ export const useUserStore = defineStore('userStore', {
         getUserName: (state) => state.userName,
     },
     actions: {
-        setUserName(userName: string) {
-            this.userName = userName;
+        async login(userName: string) {
+            try {
+                const response = await loginUser(userName);
+                this.userName = userName;
+                console.log(response);
+            } catch (error) {
+                // handle error
+            }
         },
     },
 });

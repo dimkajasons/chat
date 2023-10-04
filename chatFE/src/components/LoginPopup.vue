@@ -2,6 +2,7 @@
 import { useDialog, NInput } from 'naive-ui';
 import { useUserStore } from '../stores/user';
 import { ref, onMounted, h } from 'vue';
+import { createSocketService } from '@/socket';
 
 const userStore = useUserStore();
 const userName = ref('');
@@ -10,7 +11,8 @@ const handleUserNameChange = (value: string) => {
     userName.value = value;
 };
 const handlePositiveClick = () => {
-    userStore.setUserName(userName.value);
+    userStore.login(userName.value);
+    createSocketService(userName.value);
 };
 
 const dialog = useDialog();

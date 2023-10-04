@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { NDialogProvider } from 'naive-ui';
-import ConnectionState from './components/ConnectionState.vue';
-import ConnectionManager from './components/ConnectionManager.vue';
 import LoginPopup from './components/LoginPopup.vue';
 import ChatComponent from './components/ChatComponent.vue';
 import SidePanel from './components/SidePanel.vue';
@@ -16,7 +14,7 @@ import SidePanel from './components/SidePanel.vue';
             <div class="chat-panel">
                 <ChatComponent />
             </div>
-            <!-- <LoginPopup /> -->
+            <LoginPopup />
         </n-dialog-provider>
     </div>
 </template>

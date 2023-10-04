@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { socket } from '@/socket';
+import { state as socketState } from '@/socket';
 import { NButton } from 'naive-ui';
 
-const connect = () => socket.connect();
+const connect = () => socketState.socket.connect();
 
-const disconnect = () => socket.disconnect();
+const disconnect = () => socketState.socket.disconnect();
 </script>
 
 <template>

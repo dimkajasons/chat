@@ -9,7 +9,7 @@ const userStore = useUserStore();
 
 <template>
     <div class="connection-state">
-        <n-icon size="40" :color="socketState.connected && '#0e7a0d'">
+        <n-icon size="40" :color="socketState.connected ? '#0e7a0d' : undefined">
             <checkmark-circle />
         </n-icon>
         <!-- <p>State: {{ socketState.connected }}</p> -->
