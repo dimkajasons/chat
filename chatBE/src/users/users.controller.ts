@@ -40,7 +40,7 @@ export class UserController extends BaseController implements IUserController {
 		// }
 		// const jwt = await this.signJWT(req.body.email, this.configService.get('SECRET'));
 		this.loggerService.log('[User Controller], login user');
-		this.socketService.addNamespace(req.body.name);
+		this.socketService.handleUserLogin(req.body.name);
 		this.ok(res, {});
 	}
 

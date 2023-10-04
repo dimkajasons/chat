@@ -12,7 +12,6 @@ const userStore = useUserStore();
         <n-icon size="40" :color="socketState.connected ? '#0e7a0d' : undefined">
             <checkmark-circle />
         </n-icon>
-        <!-- <p>State: {{ socketState.connected }}</p> -->
         <p>User: {{ userStore.userName }}</p>
     </div>
 </template>

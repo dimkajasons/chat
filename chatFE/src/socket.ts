@@ -1,9 +1,11 @@
 import { reactive } from 'vue';
 import { io } from 'socket.io-client';
 
+const mockUsers = [{ userName: 'testUser1' }, { userName: 'testUser4' }, { userName: 'testUser7' }];
+
 export const state = reactive<any>({
     connected: false,
-    activeUsers: [],
+    activeUsers: mockUsers,
     messages: {},
     socketManager: null,
 });
@@ -39,11 +41,11 @@ export const createSocketService = (userName: string) => {
         );
     });
 
-    socket.on('msg-received', (message: any) => {
-        if (state.messages[message.user]) {
-            state.messages[message.user] = [message];
+    socket.on('chat-message', (message: any) => {
+        if (state.messages[message.userFrom]) {
+            state.messages[message.userFrom] = [message];
         } else {
-            state.messages[message.user].push(message);
+            state.messages[message.userFrom].push(message);
         }
     });
 

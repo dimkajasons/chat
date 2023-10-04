@@ -12,7 +12,7 @@ const handleSend = () => {
     console.log(message.value);
 
     socketState.socket.emit('chat-message', {
-        userName: userStore.userName,
+        userFrom: userStore.userName,
         message: message.value,
     });
 };
