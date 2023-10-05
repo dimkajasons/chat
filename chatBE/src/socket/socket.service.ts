@@ -33,7 +33,6 @@ export class SocketService implements ISocketService {
 			this.sendActiveUsers(socket, userName);
 			this.notifyActiveUsers(userName);
 		});
-		// this.connectionsByTenant[userName].on(CHAT_MESSAGE, this.chatMessage.bind(this));
 		this.logger.log('[Socket] Namespace created');
 	}
 
@@ -61,10 +60,27 @@ export class SocketService implements ISocketService {
 		});
 	}
 
-	chatMessage(socketMessage: { fromUserName: string; toUserName: string; text: string }): void {
+	chatMessage(socketMessage: {
+		userFrom: string;
+		userTo: string;
+		messageText: string;
+		timeStamp: number;
+		isMineMessage: boolean;
+	}): void {
 		this.logger.log(socketMessage);
-		const { toUserName } = socketMessage;
+		const { userTo, userFrom, messageText, timeStamp } = socketMessage;
 		socketMessages.push(socketMessage);
-		this.connectionsByTenant[toUserName].emit(CHAT_MESSAGE, socketMessage);
+		if (userTo === 'testUser1') {
+			this.connectionsByTenant[userFrom].emit(CHAT_MESSAGE, {
+				userFrom: userTo,
+				userTo: userFrom,
+				messageText: messageText.split('').reverse().join(''),
+				timestamp: Date.now(),
+			});
+		} else {
+			console.log(this.connectionsByTenant);
+			const { isMineMessage, ...newSocketMessage } = socketMessage;
+			this.connectionsByTenant[userTo].emit(CHAT_MESSAGE, newSocketMessage);
+		}
 	}
 }

@@ -1,5 +1,6 @@
 import { reactive } from 'vue';
 import { io } from 'socket.io-client';
+import { useChatStore } from './stores/chat';
 
 const mockUsers = [{ userName: 'testUser1' }, { userName: 'testUser4' }, { userName: 'testUser7' }];
 
@@ -13,10 +14,12 @@ export const state = reactive<any>({
 // const URL = process.env.NODE_ENV === 'production' ? null : 'http://localhost:3000'
 
 export const createSocketService = (userName: string) => {
-    const socket = io(`http://localhost:3000/${userName}`, {
+    const socket = io(`http://${import.meta.env.VITE_ASSET_URL}:3000/${userName}`, {
         autoConnect: false,
         transports: ['websocket'],
     });
+
+    const { addChatMessage } = useChatStore();
 
     state.socket = socket;
 
@@ -29,7 +32,7 @@ export const createSocketService = (userName: string) => {
     });
 
     socket.on('connected', (message) => {
-        state.activeUsers = message.activeUsers;
+        state.activeUsers = state.activeUsers.concat(message.activeUsers);
     });
 
     socket.on('user-connected', (user: any) => {
@@ -42,10 +45,11 @@ export const createSocketService = (userName: string) => {
     });
 
     socket.on('chat-message', (message: any) => {
+        addChatMessage(message);
         if (state.messages[message.userFrom]) {
-            state.messages[message.userFrom] = [message];
-        } else {
             state.messages[message.userFrom].push(message);
+        } else {
+            state.messages[message.userFrom] = [message];
         }
     });
 

@@ -17,6 +17,7 @@ export class App {
 	app: Express;
 	server: Server;
 	port: number;
+	host: string;
 	socketInstance: SocketServer;
 
 	constructor(
@@ -28,13 +29,14 @@ export class App {
 	) {
 		this.app = express();
 		this.port = 3000;
+		this.host = this.configService.get('HOST') || '127.0.0.1';
 	}
 
 	useMiddleware(): void {
 		this.app.use(json());
 		this.app.use(
 			cors({
-				origin: this.configService.get('CORS_ORIGIN'),
+				origin: '*',
 			}),
 		);
 	}
@@ -65,11 +67,11 @@ export class App {
 		this.useSocketService();
 
 		// connect to db
-		this.logger.log(`Server started at http://localhost:${this.port}`);
+		this.logger.log(`Server started at http://${this.host}:${this.port}`);
 	}
 
 	public close(): void {
-		this.logger.log(`Server closed at http://localhost:${this.port}`);
+		this.logger.log(`Server closed at http://${this.host}:${this.port}`);
 		this.server.close();
 	}
 }

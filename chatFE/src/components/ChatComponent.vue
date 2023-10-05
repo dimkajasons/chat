@@ -1,29 +1,46 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
 import { NInputGroup, NInput, NButton } from 'naive-ui';
 import { state as socketState } from '@/socket';
+import ChatMessage from './ChatMessage.vue';
 import { useUserStore } from '../stores/user';
+import { useChatStore } from '../stores/chat';
 
 const userStore = useUserStore();
+const chatStore = useChatStore();
+const { activeChatUser, getChatByActiveChatUser } = storeToRefs(chatStore);
+const { addChatMessage } = chatStore;
 
-const message = ref('');
+const messageText = ref('');
+const activeChat = getChatByActiveChatUser;
 
 const handleSend = () => {
-    console.log(message.value);
-
-    socketState.socket.emit('chat-message', {
+    console.log(messageText.value);
+    const message = {
         userFrom: userStore.userName,
-        message: message.value,
-    });
+        messageText: messageText.value,
+        userTo: activeChatUser.value,
+        isMineMessage: true,
+    };
+
+    addChatMessage(message);
+    socketState.socket.emit('chat-message', message);
 };
 const handleUpdateValue = (value: string) => {
-    message.value = value;
+    messageText.value = value;
 };
 </script>
 
 <template>
     <div class="chat-component">
-        <div class="chat-container"></div>
+        <div class="chat-container">
+            <ul class="message-list">
+                <template v-bind:key="chatMessage.timestamp" v-for="chatMessage in activeChat">
+                    <ChatMessage :chatMessage="chatMessage" />
+                </template>
+            </ul>
+        </div>
         <div class="input-component">
             <n-input-group class="input-group">
                 <n-input
@@ -31,7 +48,7 @@ const handleUpdateValue = (value: string) => {
                     :autosize="{
                         maxRows: 1,
                     }"
-                    :value="message"
+                    :value="messageText"
                     @update:value="handleUpdateValue"
                 />
                 <n-button @click="handleSend" type="primary" ghost> Send </n-button>
@@ -49,6 +66,11 @@ const handleUpdateValue = (value: string) => {
 }
 .chat-container {
     flex-grow: 1;
+}
+.message-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 .input-component {
     height: 70px;
