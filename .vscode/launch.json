@@ -10,7 +10,12 @@
             "name": "Launch Program",
             "skipFiles": ["<node_internals>/**"],
             "program": "${workspaceFolder}/chatBE/src/main.ts",
-            "outFiles": ["${workspaceFolder}/**/*.js"]
+            "outFiles": ["${workspaceFolder}/**/*.js"],
+            "cwd": "${workspaceFolder}/chatBE",
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ]
         }
     ]
 }

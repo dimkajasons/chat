@@ -1,11 +1,14 @@
 import { compare, hash } from 'bcryptjs';
+import {} from 'node:crypto';
 
 export class User {
 	private _password: string;
+	private _name: string;
 
-	constructor(private readonly _name: string, passwordHash?: string) {
-		if (passwordHash) {
-			this._password = passwordHash;
+	constructor(name: string, password?: string) {
+		this._name = name;
+		if (password) {
+			this._password = password;
 		}
 	}
 
@@ -17,8 +20,9 @@ export class User {
 		return this._password;
 	}
 
-	public async setPassword(pass: string, salt: number): Promise<void> {
-		this._password = await hash(pass, salt);
+	public async setPassword(pass: string, salt?: number): Promise<void> {
+		// this._password = await hash(pass, salt);
+		this._password = pass;
 	}
 
 	public async comparePassword(pass: string): Promise<boolean> {

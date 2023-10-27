@@ -16,6 +16,7 @@ const messageText = ref('');
 const activeChat = getChatByActiveChatUser;
 
 const handleSend = () => {
+    if (!messageText.value) return;
     console.log(messageText.value);
     const message = {
         userFrom: userStore.userName,
@@ -26,9 +27,7 @@ const handleSend = () => {
 
     addChatMessage(message);
     socketState.socket.emit('chat-message', message);
-};
-const handleUpdateValue = (value: string) => {
-    messageText.value = value;
+    messageText.value = '';
 };
 </script>
 
@@ -45,11 +44,11 @@ const handleUpdateValue = (value: string) => {
             <n-input-group class="input-group">
                 <n-input
                     type="textarea"
+                    v-model:value="messageText"
+                    @keypress.prevent.enter="handleSend"
                     :autosize="{
-                        maxRows: 1,
+                        maxRows: 3,
                     }"
-                    :value="messageText"
-                    @update:value="handleUpdateValue"
                 />
                 <n-button @click="handleSend" type="primary" ghost> Send </n-button>
             </n-input-group>
@@ -73,11 +72,12 @@ const handleUpdateValue = (value: string) => {
     gap: 5px;
 }
 .input-component {
-    height: 70px;
+    margin-bottom: 10px;
 }
 .input-group {
     width: 100%;
     display: flex;
     justify-content: center;
+    align-items: flex-end;
 }
 </style>

@@ -13,12 +13,17 @@ import { UserService } from './users/users.service';
 import { IUserService } from './users/users.service.interface';
 import { IUserController } from './users/users.controller.interface';
 import { UserController } from './users/users.controller';
+import { DatabaseService } from './database/database.service';
+import { UsersRepository } from './users/users.repository';
+import { IUsersRepository } from './users/users.repository.interface';
 
 export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
 	bind<IUserController>(TYPES.UserController).to(UserController);
 	bind<IUserService>(TYPES.UserService).to(UserService);
 	bind<ILogger>(TYPES.ILogger).to(LoggerService).inSingletonScope();
 	bind<ISocketService>(TYPES.SocketService).to(SocketService).inSingletonScope();
+	bind<DatabaseService>(TYPES.DatabaseService).to(DatabaseService).inSingletonScope();
+	bind<IUsersRepository>(TYPES.UsersRepository).to(UsersRepository).inSingletonScope();
 	bind<IExeptionFilter>(TYPES.ExeptionFilter).to(ExeptionFilter);
 	bind<IConfigService>(TYPES.ConfigService).to(ConfigService);
 	bind<App>(TYPES.Application).to(App);

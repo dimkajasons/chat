@@ -11,6 +11,7 @@ import { IExeptionFilter } from './errors/exeption.filter.interface';
 import { IConfigService } from './config/config.service.interface';
 import { ISocketService } from './socket/socket.service.interface';
 import { UserController } from './users/users.controller';
+import { DatabaseService } from './database/database.service';
 
 @injectable()
 export class App {
@@ -26,6 +27,7 @@ export class App {
 		@inject(TYPES.ExeptionFilter) private exeptionFilter: IExeptionFilter,
 		@inject(TYPES.SocketService) private socketService: ISocketService,
 		@inject(TYPES.UserController) private userController: UserController,
+		@inject(TYPES.DatabaseService) private databaseService: DatabaseService,
 	) {
 		this.app = express();
 		this.port = 3000;
@@ -66,7 +68,7 @@ export class App {
 
 		this.useSocketService();
 
-		// connect to db
+		await this.databaseService.connect();
 		this.logger.log(`Server started at http://${this.host}:${this.port}`);
 	}
 

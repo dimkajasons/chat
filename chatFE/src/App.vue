@@ -1,21 +1,24 @@
 <script setup lang="ts">
-import { NDialogProvider } from 'naive-ui';
+import { NDialogProvider, NConfigProvider } from 'naive-ui';
 import LoginPopup from './components/LoginPopup.vue';
 import ChatComponent from './components/ChatComponent.vue';
 import SidePanel from './components/SidePanel.vue';
+import { darkTheme } from 'naive-ui';
 </script>
 
 <template>
     <div class="wrapper">
-        <n-dialog-provider>
-            <div class="side-panel">
-                <SidePanel />
-            </div>
-            <div class="chat-panel">
-                <ChatComponent />
-            </div>
-            <LoginPopup />
-        </n-dialog-provider>
+        <n-config-provider :abstract="true" :theme="darkTheme">
+            <n-dialog-provider>
+                <div class="side-panel">
+                    <SidePanel />
+                </div>
+                <div class="chat-panel">
+                    <ChatComponent />
+                </div>
+                <LoginPopup />
+            </n-dialog-provider>
+        </n-config-provider>
     </div>
 </template>
 
