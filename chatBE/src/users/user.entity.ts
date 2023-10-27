@@ -2,18 +2,19 @@ import { compare, hash } from 'bcryptjs';
 import {} from 'node:crypto';
 
 export class User {
+	private _userName: string;
 	private _password: string;
-	private _name: string;
+	private _firstName?: string;
+	private _lastName?: string;
+	private _email?: string;
 
-	constructor(name: string, password?: string) {
-		this._name = name;
-		if (password) {
-			this._password = password;
-		}
+	constructor(userName: string, password: string) {
+		this._userName = userName;
+		this._password = password; // hash here
 	}
 
-	get name(): string {
-		return this._name;
+	get userName(): string {
+		return this._userName;
 	}
 
 	get password(): string {

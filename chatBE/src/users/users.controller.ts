@@ -30,13 +30,6 @@ export class UserController extends BaseController implements IUserController {
 				method: 'post',
 				func: this.login,
 			},
-			{
-				path: '/login',
-				method: 'get',
-				func: (): void => {
-					console.log('login - get');
-				},
-			},
 		]);
 		// this.socketInstance = new SocketService(this.server);
 		// this.socketService.initSocket(this.socketInstance);
@@ -47,9 +40,9 @@ export class UserController extends BaseController implements IUserController {
 		if (!result) {
 			return next(new HTTPError(401, 'authorisation error', 'login'));
 		}
-		const jwt = await this.signJWT(req.body.name);
+		const jwt = await this.signJWT(req.body.userName);
 		this.loggerService.log('[User Controller], login user');
-		this.socketService.handleUserLogin(req.body.name);
+		this.socketService.handleUserLogin(req.body.userName);
 		res.set('Authorization', `Bearer ${jwt}`);
 		this.ok(res, { jwt });
 	}
@@ -63,7 +56,7 @@ export class UserController extends BaseController implements IUserController {
 		if (!result) {
 			return next(new HTTPError(422, 'User already exist'));
 		}
-		this.ok(res, { userName: result.name, id: result.id });
+		this.ok(res, { userName: result.userName, id: result.id });
 	}
 
 	private signJWT(email: string, secret = 'qwe'): Promise<string> {

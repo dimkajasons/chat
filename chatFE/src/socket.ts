@@ -18,6 +18,7 @@ export const createSocketService = (userName: string) => {
         autoConnect: false,
         transports: ['websocket'],
     });
+    socket.connect();
 
     const { addChatMessage } = useChatStore();
 

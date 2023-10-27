@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { object, string } from 'yup';
 import { storeToRefs } from 'pinia';
 import { partial } from 'lodash';
 import {
@@ -8,12 +7,15 @@ import {
     NButton,
     NForm,
     NFormItem,
+    NCard,
+    NTabs,
+    NTabPane,
     type FormInst,
     type FormItemRule,
     type FormRules,
 } from 'naive-ui';
 import { useUserStore } from '../stores/user';
-import { ref, onMounted, h, markRaw, reactive } from 'vue';
+import { ref, reactive } from 'vue';
 
 enum FormTypes {
     SIGN_IN = 'SIGN_IN',
@@ -22,32 +24,67 @@ enum FormTypes {
 
 type FormData = {
     userName: string;
-    firstName?: string;
-    lastName?: string;
     password: string;
+    reenteredPassword?: string;
 };
+
+const initialFormData: FormData = { userName: '', password: '', reenteredPassword: '' };
 
 const formRef = ref<FormInst | null>(null);
-
-const validateForm = (field) => {};
+const currentForm = ref<FormTypes>(FormTypes.SIGN_IN);
+const formData = ref<FormData>({ ...initialFormData });
 
 const userStore = useUserStore();
-const { isAuthorized } = storeToRefs(userStore);
+const { isAuthorized, isLoading } = storeToRefs(userStore);
 
-const userName = ref('');
-const currentForm = ref<FormTypes>();
-const formData = reactive<FormData>({ userName: '', password: '' });
+const handleSubmit = async () => {
+    const isValid = await formRef.value?.validate();
+    if (!isValid) return;
 
-const setFormData = (key: keyof FormData, value: string) => {
-    formData[key] = value;
+    if (currentForm.value === FormTypes.SIGN_IN) {
+        userStore.login(formData.value);
+    } else {
+        userStore.register(formData.value);
+    }
 };
 
-const handleUserNameChange = (value: string) => {
-    userName.value = value;
+const handleTabChange = (nextTab: FormTypes) => {
+    formData.value = { ...initialFormData };
+
+    currentForm.value = nextTab;
 };
-const handleSubmit = () => {
-    console.log(formData);
-    userStore.register(formData);
+
+const validatePasswordSame = (rule: FormItemRule, value: string): boolean => {
+    return value === formData.value.password;
+};
+const loginRules: FormRules = {
+    userName: [
+        {
+            required: true,
+            message: 'User Name is required',
+        },
+    ],
+    password: [
+        {
+            required: true,
+            message: 'Password is required',
+        },
+    ],
+};
+const registerRules = {
+    ...loginRules,
+    reenteredPassword: [
+        {
+            required: true,
+            message: 'Re-entered password is required',
+            trigger: ['input', 'blur'],
+        },
+        {
+            validator: validatePasswordSame,
+            message: 'Password is not same as re-entered password!',
+            trigger: ['blur', 'password-input'],
+        },
+    ],
 };
 </script>
 
@@ -55,46 +92,89 @@ const handleSubmit = () => {
     <!-- move to separate component -->
     <div v-if="!isAuthorized" class="overlay"></div>
     <div class="dialog">
-        <div class="header">
-            {{ currentForm === FormTypes.SIGN_IN ? 'Login' : 'Sign up' }}
-        </div>
         <div class="body">
-            <n-form ref="formRef" :model="formData">
-                <n-form-item class="form-item" path="userName" label="User name">
-                    <n-input
-                        class="form-input"
-                        placeholder="Enter UserName"
-                        v-model:value="formData.userName"
-                        @keydown.enter.prevent
-                    />
-                </n-form-item>
-                <n-form-item class="form-item" path="password" label="Password">
-                    <n-input
-                        v-model:value="formData.password"
-                        placeholder="Enter Password"
-                        type="password"
-                        @keydown.enter.prevent
-                    />
-                </n-form-item>
-            </n-form>
-            <!-- <n-input class="form-input" name="userName" :on-change="partial(setFormData, 'userName')"></n-input>
-            <n-input  class="form-input"
-                v-if="currentForm === FormTypes.SIGN_UP"
-                name="firstName"
-                :on-change="partial(setFormData, 'firstName')"
-            ></n-input>
-            <n-input  class="form-input"
-                v-if="currentForm === FormTypes.SIGN_UP"
-                name="lastName"
-                :on-change="partial(setFormData, 'lastName')"
-            ></n-input>
-            <n-input placeholder="Enter Password" class="form-input" name="password" :on-change="partial(setFormData, 'password')"></n-input> -->
+            <NCard>
+                <NTabs
+                    class="card-tabs"
+                    :default-value="currentForm"
+                    size="large"
+                    animated
+                    pane-wrapper-style="margin: 0 -4px"
+                    pane-style="padding-left: 4px; padding-right: 4px; box-sizing: border-box;"
+                    :on-update:value="handleTabChange"
+                >
+                    <NTabPane :name="FormTypes.SIGN_IN" tab="Sign in">
+                        <NForm class="form" ref="formRef" :model="formData" :rules="loginRules">
+                            <NFormItem class="form-item" path="userName" label="User name">
+                                <NInput
+                                    class="form-input"
+                                    placeholder="Enter UserName"
+                                    v-model:value="formData.userName"
+                                    @keydown.enter.prevent
+                                />
+                            </NFormItem>
+                            <NFormItem class="form-item" path="password" label="Password">
+                                <NInput
+                                    v-model:value="formData.password"
+                                    placeholder="Enter Password"
+                                    type="password"
+                                    @keydown.enter.prevent
+                                />
+                            </NFormItem>
+                            <NButton
+                                class="submit-btn"
+                                :loading="isLoading"
+                                :on-click="handleSubmit"
+                                type="primary"
+                            >
+                                Login
+                            </NButton>
+                        </NForm>
+                    </NTabPane>
+                    <NTabPane :name="FormTypes.SIGN_UP" tab="Sign up">
+                        <NForm class="form" ref="formRef" :model="formData" :rules="registerRules">
+                            <NFormItem class="form-item" path="userName" label="User name">
+                                <NInput
+                                    class="form-input"
+                                    placeholder="Enter UserName"
+                                    v-model:value="formData.userName"
+                                    @keydown.enter.prevent
+                                />
+                            </NFormItem>
+                            <NFormItem class="form-item" path="password" label="Password">
+                                <NInput
+                                    v-model:value="formData.password"
+                                    placeholder="Enter Password"
+                                    type="password"
+                                    @keydown.enter.prevent
+                                />
+                            </NFormItem>
+                            <NFormItem
+                                class="form-item"
+                                path="reenteredPassword"
+                                label="Reenter Password"
+                            >
+                                <NInput
+                                    v-model:value="formData.reenteredPassword"
+                                    placeholder="Reenter Password"
+                                    type="password"
+                                    @keydown.enter.prevent
+                                />
+                            </NFormItem>
+                            <NButton
+                                class="submit-btn"
+                                :loading="isLoading"
+                                :on-click="handleSubmit"
+                                type="primary"
+                            >
+                                Register
+                            </NButton>
+                        </NForm>
+                    </NTabPane>
+                </NTabs>
+            </NCard>
         </div>
-        <div class="footer">
-            <n-button :on-click="handleSubmit" type="primary">{{
-                currentForm === FormTypes.SIGN_IN ? 'Login' : 'Sign up'
-            }}</n-button>
-        </div>
+        <div class="footer"></div>
     </div>
 </template>
 
@@ -107,7 +187,7 @@ const handleSubmit = () => {
     opacity: 0.3;
 }
 .dialog {
-    width: 300px;
+    width: 400px;
     position: fixed;
     background-color: var(--secondary);
     transform: translate(-50%, -50%);
@@ -115,8 +195,15 @@ const handleSubmit = () => {
     left: 50%;
     padding: 15px;
 }
+.form {
+    display: flex;
+    flex-direction: column;
+}
 .footer {
     display: flex;
     justify-content: flex-end;
+}
+.submit-btn {
+    float: right;
 }
 </style>

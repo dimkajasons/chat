@@ -11,14 +11,16 @@ datasource db {
 }
 
 model User {
-    id       String @id @unique
-    password String
-    email    String @unique
-    name     String
+    id        String  @id @unique
+    userName  String  @unique
+    password  String
+    email     String? @unique
+    firstName String?
+    lastName  String?
 }
 
 model Message {
-    id          Int      @id @default(autoincrement())
+    id          Int      @id @unique
     messageText String
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt

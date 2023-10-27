@@ -13,23 +13,21 @@ export class UserService {
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.UsersRepository) private usersRepository: IUsersRepository,
 	) {}
-	async createUser({ name, password }: any): Promise<UserModel | null> {
-		const newUser = new User(name, password);
-		await newUser.setPassword(password);
-		const existedUser = await this.usersRepository.find(name);
+	async createUser({ userName, password }: User): Promise<UserModel | null> {
+		// hash password here
+		const newUser = new User(userName, password);
+		const existedUser = await this.usersRepository.find(userName);
 		if (existedUser) {
 			return null;
 		}
 		const createdUser = await this.usersRepository.create(newUser);
 		return createdUser;
 	}
-	async validateUser({ name, password }: User): Promise<boolean> {
-		const existedUser = await this.usersRepository.find(name);
+	async validateUser({ userName, password }: User): Promise<boolean> {
+		const existedUser = await this.usersRepository.find(userName);
 		if (!existedUser) {
 			return false;
 		}
 		return true;
-		// const newUser = new User(existedUser.email, existedUser.name, existedUser.password);
-		// return newUser.comparePassword(password);
 	}
 }

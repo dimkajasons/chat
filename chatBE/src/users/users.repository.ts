@@ -9,21 +9,20 @@ import { DatabaseService } from '../database/database.service';
 export class UsersRepository {
 	constructor(@inject(TYPES.DatabaseService) private databaseService: DatabaseService) {}
 
-	async create({ password, name }: User): Promise<UserModel> {
+	async create({ password, userName }: User): Promise<UserModel> {
 		return this.databaseService.client.user.create({
 			data: {
-				email: '',
-				password,
-				name,
 				id: uuidv4(),
+				userName,
+				password,
 			},
 		});
 	}
 
-	async find(name: string): Promise<UserModel | null> {
+	async find(userName: string): Promise<UserModel | null> {
 		return this.databaseService.client.user.findFirst({
 			where: {
-				name,
+				userName,
 			},
 		});
 	}

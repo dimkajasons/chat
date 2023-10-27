@@ -7,13 +7,15 @@ export const useUserStore = defineStore('userStore', {
     state: () => ({
         userName: '',
         isAuthorized: false,
+        isLoading: false,
     }),
     getters: {
         getUserName: (state) => state.userName,
     },
     actions: {
         async login(userData: UserModel) {
-            const { userName, password } = userData;
+            const { userName } = userData;
+            this.isLoading = true;
             try {
                 const response = await loginUser(userName);
                 createSocketService(userName);
@@ -21,16 +23,19 @@ export const useUserStore = defineStore('userStore', {
                 console.log(response);
             } catch (error) {
                 // handle error
+            } finally {
+                this.isLoading = false;
             }
         },
         async register(userData: UserModel) {
-            const { userName, password } = userData;
+            this.isLoading = true;
             try {
                 const response = await registerUser(userData);
-                this.userName = userName;
                 console.log(response);
             } catch (error) {
                 // handle error
+            } finally {
+                this.isLoading = false;
             }
         },
     },
